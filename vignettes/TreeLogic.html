@@ -368,20 +368,20 @@ microbiome P/A data</h3>
 <span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a>total_taxa_num <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">unique</span>(a_col)) <span class="sc">+</span> <span class="fu">length</span>(<span class="fu">unique</span>(b_col)) <span class="sc">+</span> <span class="fu">length</span>(<span class="fu">unique</span>(c_col)) <span class="sc">+</span> <span class="fu">length</span>(<span class="fu">unique</span>(d_col))</span>
 <span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co"># 40 nodes</span></span></code></pre></div>
 </div>
-<div id="next-we-generate-the-example-response-vector.-first-uppose-our-true-model-is-y-1.5-4b1-3.5c5-5c6-4.5c9-3d19.-then-we-generate-a-pa-microbiome-leaf-level-dataset-with-sample-size-of-500-and-27-leaf-level-children.-suppose-the-signal-to-noise-ratio-is-2.0-we-add-some-noise-to-the-predicted-outcome-to-create-the-response-vector." class="section level5">
+<div id="next-we-generate-the-example-response-vector.-first-uppose-our-true-model-is-y-1.5-4b1-3.5c5-5c6-4.5c9-5d19.-then-we-generate-a-pa-microbiome-leaf-level-dataset-with-sample-size-of-500-and-27-leaf-level-children.-suppose-the-signal-to-noise-ratio-is-2.0-we-add-some-noise-to-the-predicted-outcome-to-create-the-response-vector." class="section level5">
 <h5>Next we generate the example response vector. First uppose our true
-model is y = 1.5 + 4b1 + 3.5c5 + 5c6 + 4.5c9 + 3d19. Then we generate a
+model is y = 1.5 + 4b1 + 3.5c5 + 5c6 + 4.5c9 + 5d19. Then we generate a
 P/A microbiome leaf-level dataset, with sample size of 500 and 27
 leaf-level children. Suppose the signal-to-noise ratio is 2.0, we add
 some noise to the predicted outcome to create the response vector.</h5>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>betas <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.5</span>, <span class="dv">4</span>, <span class="fl">3.5</span>, <span class="dv">5</span>, <span class="fl">4.5</span>, <span class="dv">3</span>)</span>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>betas <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.5</span>, <span class="dv">3</span>, <span class="fl">3.5</span>, <span class="dv">5</span>, <span class="fl">4.5</span>, <span class="dv">5</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2022</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>OTU_gen <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow =</span> <span class="dv">500</span>, <span class="at">ncol =</span> <span class="dv">27</span>, <span class="fu">rbinom</span>(<span class="dv">500</span><span class="sc">*</span><span class="dv">27</span>, <span class="dv">1</span>, <span class="fl">0.4</span>)) <span class="co">#lowest level 27 nodes</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2025</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>OTU_gen <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow =</span> <span class="dv">500</span>, <span class="at">ncol =</span> <span class="dv">27</span>, <span class="fu">rbinom</span>(<span class="dv">500</span><span class="sc">*</span><span class="dv">27</span>, <span class="dv">1</span>, <span class="fl">0.3</span>)) <span class="co">#lowest level 27 nodes</span></span>
 <span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a></span>
 <span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>converted_OTU_gen <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> <span class="dv">500</span>, <span class="at">ncol =</span> <span class="dv">6</span>)</span>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>converted_OTU_gen[,<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">500</span>)</span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#assume true model is y = 1.5 + 4b1 + 3.5c5 + 5c6 + 4.5c9 + 3d19</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#assume true model is y = 1.5 + 3b1 + 3.5c5 + 5c6 + 4.5c9 + 5d19</span></span>
 <span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">500</span>){</span>
 <span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>  converted_OTU_gen[,<span class="dv">2</span>][i] <span class="ot">&lt;-</span> (<span class="fu">sum</span>(OTU_gen[i,<span class="fu">which</span>(taxa_mat<span class="sc">$</span>b <span class="sc">==</span> <span class="st">&#39;b1&#39;</span>)])<span class="sc">&gt;</span><span class="dv">0</span>)</span>
 <span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>  converted_OTU_gen[,<span class="dv">3</span>][i] <span class="ot">&lt;-</span> (<span class="fu">sum</span>(OTU_gen[i,<span class="fu">which</span>(taxa_mat<span class="sc">$</span>c <span class="sc">==</span> <span class="st">&#39;c5&#39;</span>)])<span class="sc">&gt;</span><span class="dv">0</span>)</span>
@@ -401,25 +401,36 @@ Top_down_selection Algorithm as the first feature amalgamation step in
 TreeLogic</h3>
 <div id="bottom-up" class="section level5">
 <h5>Bottom-up</h5>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co">#Bottom-up (default)</span></span>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co">#Bottom-up (default), the most recommended method for dataset with sample size &gt; #leaf-level features</span></span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>res_bu <span class="ot">&lt;-</span> <span class="fu">Bottom_up_selection</span>(<span class="at">y =</span> All.Y, <span class="at">X =</span> OTU_gen, <span class="at">tree =</span> taxa_mat, <span class="at">type =</span> <span class="st">&#39;default&#39;</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c9 are combined.&quot;</span></span>
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c6 are combined.&quot;</span></span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c5 are combined.&quot;</span></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c3 are combined.&quot;</span></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c8 are combined.&quot;</span></span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c2 are combined.&quot;</span></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c1 are combined.&quot;</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c2 are combined.&quot;</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c4 are combined.&quot;</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c1 are combined.&quot;</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c8 are combined.&quot;</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c3 are combined.&quot;</span></span>
 <span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of b1 are combined.&quot;</span></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c4 are combined.&quot;</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c5 are combined.&quot;</span></span>
 <span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>bu_selected <span class="ot">&lt;-</span> <span class="fu">colnames</span>(res_bu<span class="sc">$</span>final.X)</span>
 <span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>bu_selected</span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; [1] &quot;d19&quot; &quot;d20&quot; &quot;d21&quot; &quot;c9&quot;  &quot;c6&quot;  &quot;c5&quot;  &quot;c8&quot;  &quot;b1&quot;  &quot;c4&quot;</span></span></code></pre></div>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; [1] &quot;d19&quot; &quot;d20&quot; &quot;d21&quot; &quot;c9&quot;  &quot;c6&quot;  &quot;c4&quot;  &quot;c8&quot;  &quot;b1&quot;  &quot;c5&quot;</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co">#alternatively, we can try the global min type</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#res_bu_global_min &lt;- Bottom_up_selection(y = All.Y, X = OTU_gen, tree = taxa_mat, type = &#39;global min&#39;)</span></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#colnames(res_bu_global_min$final.X)</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#note that for simple tree, the global min tend to produce very similar result as default. The results may differ when applied to a more complicated tree structure</span></span></code></pre></div>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>res_bu_global_min <span class="ot">&lt;-</span> <span class="fu">Bottom_up_selection</span>(<span class="at">y =</span> All.Y, <span class="at">X =</span> OTU_gen, <span class="at">tree =</span> taxa_mat, <span class="at">type =</span> <span class="st">&#39;global min&#39;</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c9 are combined.&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c6 are combined.&quot;</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c2 are combined.&quot;</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c4 are combined.&quot;</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c1 are combined.&quot;</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c8 are combined.&quot;</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c3 are combined.&quot;</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of b1 are combined.&quot;</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c5 are combined.&quot;</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of b2 are combined.&quot;</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of c7 are combined.&quot;</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt; [1] &quot;All children of b3 are combined.&quot;</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="fu">colnames</span>(res_bu_global_min<span class="sc">$</span>final.X)</span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt; [1] &quot;d19&quot; &quot;d20&quot; &quot;d21&quot; &quot;c9&quot;  &quot;c6&quot;  &quot;c4&quot;  &quot;c8&quot;  &quot;b1&quot;  &quot;c5&quot;</span></span></code></pre></div>
 </div>
 <div id="top-down" class="section level5">
 <h5>Top-down</h5>
@@ -437,28 +448,54 @@ TreeLogic</h3>
 <span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>  <span class="fu">colnames</span>(TD_input)[<span class="dv">1</span><span class="sc">:</span><span class="dv">27</span>] <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&#39;d&#39;</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">27</span>)</span>
 <span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>  <span class="co">#note that the TD_input needs to have attribute colnames() that match with taxa names</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co">#next we run the Top_down_selection algorithm (default)</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>res_td <span class="ot">&lt;-</span> <span class="fu">Top_down_selection</span>(<span class="at">y =</span> All.Y,<span class="at">X =</span> TD_input, <span class="at">tree =</span> taxa_mat, <span class="at">type =</span> <span class="st">&#39;default&#39;</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>res_td <span class="ot">&lt;-</span> <span class="fu">Top_down_selection</span>(<span class="at">y =</span> All.Y, <span class="at">X =</span> TD_input, <span class="at">tree =</span> taxa_mat, <span class="at">type =</span> <span class="st">&#39;default&#39;</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; [1] &quot;b2 is spanned&quot;</span></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; [1] &quot;b3 is spanned&quot;</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; [1] &quot;c7 is spanned&quot;</span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>td_selected <span class="ot">&lt;-</span> <span class="fu">colnames</span>(res_td<span class="sc">$</span>final.X)</span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>td_selected</span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; [1] &quot;b1&quot; &quot;b2&quot; &quot;b3&quot;</span></span></code></pre></div>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="fu">colnames</span>(res_td<span class="sc">$</span>final.X)</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; [1] &quot;c4&quot; &quot;c5&quot; &quot;c6&quot; &quot;b1&quot; &quot;b3&quot;</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co">#alternatively, we can try the global min type</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co"># res_td_global &lt;- Top_down_selection(y = All.Y,X = TD_input, tree = taxa_mat, type = &#39;global min&#39;)</span></span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co"># colnames(res_td_global$final.X)</span></span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#note that for simple tree, the global min tend to produce very similar result as default. The results may differ when applied to a more complicated tree structure</span></span></code></pre></div>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>res_td_global <span class="ot">&lt;-</span> <span class="fu">Top_down_selection</span>(<span class="at">y =</span> All.Y,<span class="at">X =</span> TD_input, <span class="at">tree =</span> taxa_mat, <span class="at">type =</span> <span class="st">&#39;global min&#39;</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt; [1] &quot;b2 is spanned&quot;</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt; [1] &quot;c5 is spanned&quot;</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt; [1] &quot;b3 is spanned&quot;</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; [1] &quot;c7 is spanned&quot;</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt; [1] &quot;b1 is spanned&quot;</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; [1] &quot;c3 is spanned&quot;</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt; [1] &quot;c8 is spanned&quot;</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="co">#&gt; [1] &quot;c1 is spanned&quot;</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co">#&gt; [1] &quot;c4 is spanned&quot;</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="co">#&gt; [1] &quot;c2 is spanned&quot;</span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co">#&gt; [1] &quot;c6 is spanned&quot;</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co">#&gt; [1] &quot;c9 is spanned&quot;</span></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="fu">colnames</span>(res_td_global<span class="sc">$</span>final.X)</span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;d19&quot; &quot;d20&quot; &quot;d21&quot; &quot;c8&quot;  &quot;c9&quot;  &quot;d13&quot; &quot;d14&quot; &quot;d15&quot; &quot;c4&quot;  &quot;c6&quot;  &quot;b1&quot;</span></span></code></pre></div>
 </div>
-</div>
-<div id="for-a-simple-tree-case-top-down-and-bottom-up-approach-would-yield-samesimilar-results." class="section level3">
-<h3>For a simple tree case, Top-down and Bottom-up approach would yield
-same/similar results.</h3>
 </div>
 <div id="the-next-step-of-treelogic-is-to-utilize-a-penalized-regression-to-achieve-further-feature-selection.-a-wide-range-of-penalized-regression-or-feature-selection-methods-can-be-applied.-we-demonstrate-with-lasso-as-an-example." class="section level3">
 <h3>The next step of TreeLogic is to utilize a penalized regression to
 achieve further feature selection. A wide range of penalized regression
 or feature selection methods can be applied. We demonstrate with LASSO
 as an example.</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">library</span>(glmnet)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; Loading required package: Matrix</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; Loaded glmnet 4.1-8</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#use the output from bu algorithm as the input</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>fit.lasso <span class="ot">=</span> <span class="fu">cv.glmnet</span>(<span class="fu">as.matrix</span>(res_bu<span class="sc">$</span>final.X), All.Y, <span class="at">family =</span> <span class="st">&quot;gaussian&quot;</span>, <span class="at">nfolds =</span> <span class="dv">10</span>, <span class="at">alpha =</span> <span class="dv">1</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>                     <span class="co">#penalty.factor = rep(1,ncol(as.matrix(res_bu$final.X)))) </span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#note that in case where we have non-microbiome covaraties, we do not apply penalty factor on these covariates</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#to extract the names of the nonzero coefficients</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>lam.id<span class="ot">=</span><span class="fu">which</span>(fit.lasso<span class="sc">$</span>lambda<span class="sc">==</span>fit.lasso<span class="sc">$</span>lambda.min)</span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>tmp_coeffs <span class="ot">&lt;-</span> <span class="fu">coef</span>(fit.lasso, <span class="at">s =</span> fit.lasso<span class="sc">$</span>lambda.min)</span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>df_coef <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">name =</span> tmp_coeffs<span class="sc">@</span>Dimnames[[<span class="dv">1</span>]][tmp_coeffs<span class="sc">@</span>i <span class="sc">+</span> <span class="dv">1</span>], <span class="at">coefficient =</span> tmp_coeffs<span class="sc">@</span>x)</span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>selected_final <span class="ot">&lt;-</span> df_coef<span class="sc">$</span>name[<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>nsel_final<span class="ot">=</span>fit.lasso<span class="sc">$</span>nzero[lam.id]</span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>selected_final</span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a><span class="co">#&gt; [1] &quot;d19&quot; &quot;d21&quot; &quot;c9&quot;  &quot;c6&quot;  &quot;b1&quot;  &quot;c5&quot;</span></span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a>nsel_final</span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a><span class="co">#&gt; s26 </span></span>
+<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a><span class="co">#&gt;   6</span></span></code></pre></div>
 </div>
 
 

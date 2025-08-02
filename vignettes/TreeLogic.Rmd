@@ -13,8 +13,6 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-#install.packages("ggbeeswarm")
-library("ggbeeswarm")
 ```
 
 
