@@ -2,6 +2,8 @@
 
 ## Introduction
 
+This is a package containing the implementation of the Tree-guided Logic Regression for Microbiome P/A data (TreeLogic) method. The package contains three functions: BIC_calc, and Bottom_up_selection, and Top_down_selection. The BIC_calc() function is a helper function that calculates the BIC of a fitted linear model, and is used in the Bottom_up_selection and Top_down_selection method. The Bottom_up_selection() and Top_down selection() functions implements the two core feature amalgamation algorithms in the TreeLogic method. Example usage of the two functions and the complete TreeLogic analysis pipeline can be found in the vignettes.
+
 ## Installation
 The installation process of TreeLogic.pack will depend on "devtools" package.
 To avoid some possible issues, it is recommended to start a new Rstudio session and restart R before installing this package.
