@@ -1,0 +1,145 @@
+---
+title: "TreeLogic"
+author: "Yiwen Chen"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{TreeLogic}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+#install.packages("ggbeeswarm")
+library("ggbeeswarm")
+```
+
+
+### load the package TreeLogic.pack
+
+```{r setup}
+library(TreeLogic.pack)
+```
+
+
+### We demonstrate the usage of this package using a simple created microbiome P/A data
+
+##### First we generate a simple 4-level tree structure:
+
+```{r}
+#tree has 4 levels, each node has 3 children
+d_col <- paste0('d', 1:27)
+c_col <- paste0('c', sort(rep(1:9,3)))
+b_col <- paste0('b', sort(rep(1:3, 9)))
+a_col <- rep('a1', 27)
+
+taxa_mat <- data.frame( d = d_col, c = c_col, b = b_col, a = a_col )
+rownames(taxa_mat) <- 1:27
+for(i in 1:27){
+  row.names(taxa_mat)[i] <- paste0(taxa_mat$a[i], '_', taxa_mat$b[i], '_', taxa_mat$c[i],'_', taxa_mat$d[i])
+}
+
+#total_taxa <- row.names(taxa_mat)
+
+total_taxa_num <- length(unique(a_col)) + length(unique(b_col)) + length(unique(c_col)) + length(unique(d_col))
+# 40 nodes
+```
+
+##### Next we generate the example response vector. First uppose our true model is y = 1.5 + 4b1 + 3.5c5 + 5c6 + 4.5c9 + 5d19. Then we generate a P/A microbiome leaf-level dataset, with sample size of 500 and 27 leaf-level children. Suppose the signal-to-noise ratio is 2.0, we add some noise to the predicted outcome to create the response vector.
+
+```{r}
+betas <- c(1.5, 3, 3.5, 5, 4.5, 5)
+
+set.seed(2025)
+OTU_gen <- matrix(nrow = 500, ncol = 27, rbinom(500*27, 1, 0.3)) #lowest level 27 nodes
+
+converted_OTU_gen <- matrix(NA, nrow = 500, ncol = 6)
+converted_OTU_gen[,1] <- rep(1, 500)
+#assume true model is y = 1.5 + 3b1 + 3.5c5 + 5c6 + 4.5c9 + 5d19
+for (i in 1:500){
+  converted_OTU_gen[,2][i] <- (sum(OTU_gen[i,which(taxa_mat$b == 'b1')])>0)
+  converted_OTU_gen[,3][i] <- (sum(OTU_gen[i,which(taxa_mat$c == 'c5')])>0)
+  converted_OTU_gen[,4][i] <- (sum(OTU_gen[i,which(taxa_mat$c == 'c6')])>0)
+  converted_OTU_gen[,5][i] <- (sum(OTU_gen[i,which(taxa_mat$c == 'c9')])>0)
+  converted_OTU_gen[,6][i] <- (sum(OTU_gen[i,which(taxa_mat$d == 'd19')])>0)
+}
+sigma2 <- var(converted_OTU_gen%*%betas)/2.0
+
+predicted_y <- converted_OTU_gen%*%betas
+All.Y <- predicted_y + rnorm(500, 0, sigma2)
+```
+
+### Let's demonstrate how to apply our Bottom_up_selection and Top_down_selection Algorithm as the first feature amalgamation step in TreeLogic
+
+
+##### Bottom-up
+
+```{r}
+#Bottom-up (default), the most recommended method for dataset with sample size > #leaf-level features
+res_bu <- Bottom_up_selection(y = All.Y, X = OTU_gen, tree = taxa_mat, type = 'default')
+bu_selected <- colnames(res_bu$final.X)
+bu_selected
+```
+```{r}
+#alternatively, we can try the global min type
+res_bu_global_min <- Bottom_up_selection(y = All.Y, X = OTU_gen, tree = taxa_mat, type = 'global min')
+colnames(res_bu_global_min$final.X)
+
+```
+
+
+##### Top-down
+
+```{r}
+#first we need to generate the input matrix consisting of the inferred P/A status for all nodes in the tree from the leaf-level P/A matrix
+bin.feature <- OTU_gen
+for(level in 2:dim(taxa_mat)[2]){
+    temp=aggregate(t(OTU_gen), by=list(taxa_mat[,level]),FUN='sum') 
+    tree.feature=(t(temp[,-1])>0)+0 # convert to OR relationship 
+    colnames(tree.feature)=temp[,1]
+    bin.feature=cbind(bin.feature,tree.feature)
+    
+  }
+ 
+  TD_input=as.matrix(bin.feature)
+  colnames(TD_input)[1:27] <- paste0('d',1:27)
+  #note that the TD_input needs to have attribute colnames() that match with taxa names
+```
+
+```{r}
+#next we run the Top_down_selection algorithm (default)
+res_td <- Top_down_selection(y = All.Y, X = TD_input, tree = taxa_mat, type = 'default')
+colnames(res_td$final.X)
+```
+
+```{r}
+#alternatively, we can try the global min type
+res_td_global <- Top_down_selection(y = All.Y,X = TD_input, tree = taxa_mat, type = 'global min')
+colnames(res_td_global$final.X)
+```
+
+
+### The next step of TreeLogic is to utilize a penalized regression to achieve further feature selection. A wide range of penalized regression or feature selection methods can be applied. We demonstrate with LASSO as an example.
+
+```{r}
+set.seed(12345)
+library(glmnet)
+#use the output from bu algorithm as the input
+fit.lasso = cv.glmnet(as.matrix(res_bu$final.X), All.Y, family = "gaussian", nfolds = 10, alpha = 1)
+                     #penalty.factor = rep(1,ncol(as.matrix(res_bu$final.X)))) 
+#note that in case where we have non-microbiome covaraties, we do not apply penalty factor on these covariates
+
+
+#to extract the names of the nonzero coefficients
+lam.id=which(fit.lasso$lambda==fit.lasso$lambda.min)
+tmp_coeffs <- coef(fit.lasso, s = fit.lasso$lambda.min)
+df_coef <- data.frame(name = tmp_coeffs@Dimnames[[1]][tmp_coeffs@i + 1], coefficient = tmp_coeffs@x)
+selected_final <- df_coef$name[-1]
+nsel_final=fit.lasso$nzero[lam.id]
+selected_final
+nsel_final
+```
+
