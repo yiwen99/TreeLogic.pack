@@ -1,2 +1,2 @@
-# TreeLogic_2025
+# TreeLogic.pack
 R package for TreeLogic Method
